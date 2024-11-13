@@ -1,0 +1,284 @@
+const char PAGE_MAIN[] PROGMEM = R"=====( // instead of string literals, we can just use #include "filename"
+<!DOCTYPE html>
+<html lang="en" class="js-focus-visible">
+<head>
+<title>The Smart Appliance</title>
+  <style>
+    table {
+      position: relative;
+      width:100%;
+      border-spacing: 0px;
+    }
+    tr {
+      border: 1px solid white;
+      font-family: "Verdana", "Arial", sans-serif;
+      font-size: 20px;
+    }
+    th {
+      height: 20px;
+      padding: 3px 15px;
+      background-color: #343a40;
+      color: #FFFFFF !important;
+      }
+    td {
+      height: 20px;
+      padding: 3px 15px;
+    }
+    .status {
+      font-family: "Verdana", "Arial", sans-serif;
+      font-size: 20px;
+      font-weight: normal;
+      color: #000000;
+      padding-left: 10px;
+      text-align: left;
+    }
+    .tabledata {
+      font-size: 24px;
+      position: relative;
+      padding-left: 5px;
+      padding-top: 5px;
+      height:   25px;
+      border-radius: 5px;
+      color: #FFFFFF;
+      line-height: 20px;
+      transition: all 200ms ease-in-out;
+      background-color: #00AA00;
+    }
+    .bodytext {
+      font-family: "Verdana", "Arial", sans-serif;
+      font-size: 24px;
+      text-align: left;
+      font-weight: light;
+      border-radius: 5px;
+      display:inline;
+    }
+    .navbar {
+      width: 100%;
+      height: 50px;
+      margin: 0;
+      padding: 10px 0px;
+      background-color: #FFF;
+      color: #000000;
+      border-bottom: 5px solid #293578;
+    }
+    .fixed-top {
+      position: fixed;
+      top: 0;
+      right: 0;
+      left: 0;
+      z-index: 1030;
+    }
+    .navtitle {
+      float: left;
+      height: 50px;
+      font-family: "Verdana", "Arial", sans-serif;
+      font-size: 50px;
+      font-weight: bold;
+      line-height: 50px;
+      padding-left: 20px;
+    }
+   .navheading {
+     position: fixed;
+     left: 60%;
+     height: 50px;
+     font-family: "Verdana", "Arial", sans-serif;
+     font-size: 20px;
+     font-weight: bold;
+     line-height: 20px;
+     padding-right: 20px;
+   }
+   .navdata {
+      justify-content: flex-end;
+      position: fixed;
+      left: 70%;
+      height: 50px;
+      font-family: "Verdana", "Arial", sans-serif;
+      font-size: 20px;
+      font-weight: bold;
+      line-height: 20px;
+      padding-right: 20px;
+   }
+    .category {
+      font-family: "Verdana", "Arial", sans-serif;
+      font-weight: bold;
+      font-size: 32px;
+      line-height: 50px;
+      padding: 20px 10px 0px 10px;
+      color: #000000;
+    }
+    .heading {
+      font-family: "Verdana", "Arial", sans-serif;
+      font-weight: normal;
+      font-size: 28px;
+      text-align: left;
+    }
+  
+    .btn {
+      background-color: #444444;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 10px;
+    }
+    .foot {
+      font-family: "Verdana", "Arial", sans-serif;
+      font-size: 20px;
+      position: relative;
+      height:   30px;
+      text-align: center;   
+      color: #AAAAAA;
+      line-height: 20px;
+    }
+    .timeTracking {
+      font-family: "Verdana", "Arial", sans-serif;
+      font-size: 20px;
+      font-weight: normal;
+      color: #000000;
+      padding-left: 10px;
+      text-align: left;
+      margin-top: 10px;
+    }
+    table tr:first-child th:first-child {
+      border-top-left-radius: 5px;
+    }
+    table tr:first-child th:last-child {
+      border-top-right-radius: 5px;
+    }
+    table tr:last-child td:first-child {
+      border-bottom-left-radius: 5px;
+    }
+    table tr:last-child td:last-child {
+      border-bottom-right-radius: 5px;
+    }
+  </head>
+  </style>
+  <body style="background-color: #efefef" onload="initialize()">
+  
+    <header>
+      <div class="navbar fixed-top">
+          <div class="container">
+            <div class="navtitle">The Smart Appliance</div>  
+          </div>
+      </div>
+    </header>
+  
+  <main class="container" style="margin-top:70px">
+  <div class="category">Voltage Readings</div>
+  <div style="border-radius: 10px !important;">
+    <table style="width:50%">
+      <colgroup>
+        <col span="1" style="background-color:rgb(230,230,230); width: 20%; color:#000000;">
+        <col span="1" style="background-color:rgb(200,200,200); width: 15%; color:#000000;">
+      </colgroup>
+      <tr>
+        <th><div class="heading">Pin</div></th>
+        <th><div class="heading">Volts</div></th>
+      </tr>
+      <tr>
+        <td><div class="bodytext">Analog pin 32</div></td>
+        <td><div class="tabledata" id="v0">Loading...</div></td>
+      </tr>
+    </table>
+  </div>
+  <div id="timeTracking" class="timeTracking">Time Tracking: On for 0 hours 0 minutes 0 seconds</div>
+</main>
+
+ <div class="category">Control</div>
+    <button class="btn" onclick="toggleRelay()">Turn On/Off</button>
+    <div id="status" class="status">Status: Not connected</div>
+
+  <footer class="foot" id="temp">ESP32 Controls and Data Updates</footer>
+  
+  </body>
+
+  <script type = "text/javascript">
+  // Varibales for time tracking
+    let applianceOnTime = 0;  // in seconds
+    let applianceStatus = "not connected";  // Initial appliance status
+    let applianceTimer;  // Timer to track appliance "on" time
+
+    // Toggle relay and update status, time tracking
+  function toggleRelay() {
+    if (applianceStatus === "not connected" || applianceStatus === "off") {
+      applianceStatus = "on";  // Appliance turns on
+      applianceOnTime = 0;  // Reset the timer when turned on
+      startTimer();  // Start time tracking
+      document.getElementById("toggleButton").innerText = "Turn Off";  // Change button text
+    } else if (applianceStatus === "on") {
+      applianceStatus = "off";  // Appliance turns off
+      stopTimer();  // Stop time tracking
+      document.getElementById("toggleButton").innerText = "Turn On";  // Change button text
+    }
+    updateStatus();  // Update the status on the page
+  }
+
+    // Start the timer when the appliance is on
+    function startTimer() {
+      applianceTimer = setInterval(function() {
+        applianceOnTime++;
+        updateTimeTracking();
+      }, 1000);  // Update every second
+    }
+
+    // Stop the timer when the appliance is off or not connected
+    function stopTimer() {
+      clearInterval(applianceTimer);  // Stop the time tracking
+    }
+
+    // Update the time tracking display
+    function updateTimeTracking() {
+      let hours = Math.floor(applianceOnTime / 3600);
+      let minutes = Math.floor((applianceOnTime % 3600) / 60);
+      let seconds = applianceOnTime % 60;
+      document.getElementById("timeTracking").innerText = `Time Tracking: on for ${hours} hours ${minutes} minutes ${seconds} seconds`;
+    }
+
+    // Update the appliance status display
+    function updateStatus() {
+  if (applianceStatus === "not connected") {
+    document.getElementById("status").innerHTML = "Status: Not connected";  // Appliance not connected
+    document.getElementById("status").style.color = "#ff0000";  // Red color for not connected
+    document.getElementById("timeTracking").innerHTML = "Time Tracking: on for 0 hours 0 minutes 0 seconds";  // Time tracking reset
+  } else if (applianceStatus === "off") {
+    document.getElementById("status").innerHTML = "Status: Off";  // Appliance is off
+    document.getElementById("timeTracking").innerHTML = "Time Tracking: on for 0 hours 0 minutes 0 seconds";  // Time tracking reset
+  } else if (applianceStatus === "on") {
+    document.getElementById("status").innerHTML = "Status: On";  // Appliance is on
+    document.getElementById("status").style.color = "#00aa00";  // Green color for on
+    updateTimeTracking();  // Update the time tracking display
+  }
+}
+
+    // Initialize the page
+    function initialize() {
+      updateStatus();  // Set initial status
+    }
+
+    function updateVoltage() {
+  fetch("/getVoltage")  // HTTP request to fetch voltage
+    .then(function(response) { 
+      return response.text();  // Parse voltage response
+    })
+    .then(function(voltage) {
+      if (voltage && !isNaN(voltage)) {  // Check if the voltage is a valid number
+        document.getElementById("v0").innerText = voltage + " V";  // Update the voltage display
+      } else {
+        document.getElementById("v0").innerText = "Loading...";  // Keep "Loading..." if voltage is invalid
+      }
+    });
+}
+
+// Call updateVoltage() to get latest voltage every second
+setInterval(updateVoltage, 1000);
+</script>
+</body>
+
+</html>
+
+)=====";
