@@ -1,7 +1,7 @@
 #include <pgmspace.h>
 #include "page_main.h"
 
-const char PAGE_MAIN[] PROGMEM = R"=====( // instead of string literals, we can simplysay #include "filename" in the main file
+const char PAGE_MAIN[] PROGMEM = R"=====( // instead of string literals, we can simply say #include "filename" in the main 
 <!DOCTYPE html>
 <html lang="en" class="js-focus-visible">
 <head>
@@ -159,7 +159,7 @@ const char PAGE_MAIN[] PROGMEM = R"=====( // instead of string literals, we can 
       </colgroup>
       <tr>
         <th><div class="heading">Pin</div></th>
-        <th><div class="heading">Volts</div></th>
+        <th><div class="heading">Power (W)</div></th>
       </tr>
       <tr>
         <td><div class="bodytext">Analog pin 32</div></td>
@@ -170,7 +170,7 @@ const char PAGE_MAIN[] PROGMEM = R"=====( // instead of string literals, we can 
   <div id="timeTracking" class="timeTracking">Time Tracking: On for 0 hours 0 minutes 0 seconds</div>
 </main>
  <div class="category">Control</div>
-    <button id="toggleButton" class="btn" onclick="toggleRelay()">Turn On/Off</button>
+    <button id="toggleButton" class="btn" onclick="toggleRelay()">Toggle</button>
     <div id="status" class="status">Status: Not connected</div>
   <footer class="foot">ESP32 Controls and Data Updates</footer>
   </body>
@@ -187,23 +187,26 @@ const char PAGE_MAIN[] PROGMEM = R"=====( // instead of string literals, we can 
       setInterval(updateStatus, 1000); // Check status every second
     }
 
-  // Toggle relay and update on/off button, time tracking
-    function toggleRelay() {
-     if (applianceStatus === "not connected" || applianceStatus === "off") {
-        fetch('/relay/on');
+  function toggleRelay() {
+  if (applianceStatus === "not connected" || applianceStatus === "off") {
+    fetch('/relay/on')
+      .then(function(response) {
         applianceStatus = "on";  // Appliance turns on
-        applianceOnTime = 0;  // Reset the timer when turned on
-        startTimer();  // Start time tracking
-        document.getElementById("toggleButton").innerText = "Turn Off";  // Change button text
-      } else if (applianceStatus === "on") {
-        fetch('/relay/off');
+        updateStatusDisplay();
+        startTimer();  // Start the timer when appliance is on
+      });
+  } else if (applianceStatus === "on") {
+    fetch('/relay/off')
+      .then(function(response) {
         applianceStatus = "off";  // Appliance turns off
-        stopTimer();  // Stop time tracking
-        document.getElementById("toggleButton").innerText = "Turn On";  // Change button text
-      }
+        updateStatusDisplay();
+        stopTimer();  // Stop the timer when appliance is off
+		fetchCost();  // Fetch and display the cost after appliance turns off
+      });
     }
-
-    // Start the timer when the appliance is on
+  }
+  
+    // Start the timer when appliance is on
     function startTimer() {
       applianceTimer = setInterval(function() {
         applianceOnTime++;
@@ -217,12 +220,20 @@ const char PAGE_MAIN[] PROGMEM = R"=====( // instead of string literals, we can 
     }
 
     // Update the time tracking display
-    function updateTimeTracking() {
-      let hours = Math.floor(applianceOnTime / 3600);
-      let minutes = Math.floor((applianceOnTime % 3600) / 60);
-      let seconds = applianceOnTime % 60;
-      document.getElementById("timeTracking").innerText = `Time Tracking: on for ${hours} hours ${minutes} minutes ${seconds} seconds`;
-    }
+  function updateTimeTracking() {
+    let hours = Math.floor(applianceOnTime / 3600);
+    let minutes = Math.floor((applianceOnTime % 3600) / 60);
+    let seconds = applianceOnTime % 60;
+    
+    document.getElementById("timeTracking").innerText = 
+      `Time Tracking: On for ${hours} hours ${minutes} minutes ${seconds} seconds`;
+  }
+	
+  // Fetch the cost 
+  function fetchCost() {
+    let cost = (applianceOnTime * costPerSecond).toFixed(2);  // Calculate cost based on time
+    document.getElementById("costTracking").innerText = `Cost: $${cost}`;
+  }
 
   // update the status 
   function updateStatus() {
@@ -242,6 +253,7 @@ const char PAGE_MAIN[] PROGMEM = R"=====( // instead of string literals, we can 
     });
 }
 
+// Display the above on the webpage
 function displayStatus() {
   var statusText;
   var statusColor;
@@ -261,6 +273,7 @@ function displayStatus() {
   document.getElementById("status").innerText = statusText;
   document.getElementById("status").style.color = statusColor;
 }
+setInterval(updateStatus, 1000);
 
 // Run the initialize function when the page is loaded
 window.onload = initialize;
@@ -284,6 +297,7 @@ window.onload = initialize;
 setInterval(updateVoltage, 1000);
 */
 </script>
+<div id="costTracking" class="timeTracking">Cost: $0.00</div>
 </body>
 
 </html>
