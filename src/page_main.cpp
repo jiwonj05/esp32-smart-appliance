@@ -1,11 +1,11 @@
 #include <pgmspace.h>
 #include "page_main.h"
 
-const char PAGE_MAIN[] PROGMEM = R"=====( // instead of string literals, we can simply say #include "filename" in the main 
+const char PAGE_MAIN[] PROGMEM = R"=====( 
 <!DOCTYPE html>
 <html lang="en" class="js-focus-visible">
 <head>
-<title>The Smart Appliance</title>
+<title>The Cloud Based Smart Switch</title>
   <style>
     table {
       position: relative;
@@ -144,7 +144,7 @@ const char PAGE_MAIN[] PROGMEM = R"=====( // instead of string literals, we can 
     <header>
       <div class="navbar fixed-top">
           <div class="container">
-            <div class="navtitle">The Smart Appliance</div>  
+            <div class="navtitle">The Cloud Based Smart Switch</div>  
           </div>
       </div>
     </header>
